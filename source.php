@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_STRICT);
 
-$id = 'g29454';
+$id = 'g29475';
 
 if(isset($_GET['group']) && $_GET['group'] != ''){
     $group = $_GET['group'];
