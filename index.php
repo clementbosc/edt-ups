@@ -208,7 +208,7 @@ if(isset($_GET['start'], $_GET['end'])){
     </head>
     <body>
         <header>
-            <h1>Emploi du temps groupe <?= $group.'.'.$subgroup ?></h1>
+            <h1>Emploi du temps groupe M1 DC</h1>
             <div class="inputLinkICS-container">
                 <div class="ics-img"></div>
                 <input type="text" id="inputLinkICS" value="https://<?= $_SERVER['HTTP_HOST'].'/edt/get-ics.php?group='.$group.'&subgroup='.$subgroup ?>">

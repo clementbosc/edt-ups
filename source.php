@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_STRICT);
 
-$id = 'g29475';
+$id = 'g241537';
 
 if(isset($_GET['group']) && $_GET['group'] != ''){
     $group = $_GET['group'];
@@ -64,75 +64,75 @@ function removeNewLines($string){
 
 
 $curl = curl_init();
-curl_setopt($curl, CURLOPT_URL, 'https://edt.univ-tlse3.fr/FSI/FSImentionL/Info/'.$id.'.xml');
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($curl, CURLOPT_URL, 'https://edt.univ-tlse3.fr/FSI/2017_2018/M1/M1_INF_DC/'.$id.'.xml');
+curl_setopt($curl, CURLOPT_FAILONERROR,1);
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION,1);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER,1);
+curl_setopt($curl, CURLOPT_TIMEOUT, 15);
 $xml = curl_exec($curl);
 curl_close($curl);
 
-//echo $xml;
-
-$dom = new DOMDocument();
-$dom->loadXML($xml);
-
+$dom = new SimpleXMLElement($xml);
 
 $cours = [];
 $jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
 
 
-$events = $dom->getElementsByTagName('event');
-$spans = $dom->getElementsByTagName('span');
+$events = $dom->event;
+$spans = $dom->span;
 
 
 $semaines = [];
 foreach ($spans as $key => $span) {
     $semaines[] = [
-        'description' => $span->getElementsByTagName('description')[0]->nodeValue,
-        'alleventweeks' => $span->getElementsByTagName('alleventweeks')[0]->nodeValue,
-        'dateDebut' => dateOk($span->getAttribute('date'))
+        'description' => (string) $span->description,
+        'alleventweeks' => (string) $span->alleventweeks,
+        'dateDebut' => dateOk($span['date'])
     ];
 }
 
-//die(print_r($semaines));
 $i = 0;
 foreach ($events as $key => $event) {
-    $color = $event->getAttribute('colour');
+    $color = (string) $event['colour'];
     if(isset($colorArray[$color])){
         $color = $colorArray[$color];
     }
-    $id = $event->getAttribute('id');
-    if(isset($event->getElementsByTagName('module')[0])){
-        $matiere = $event->getElementsByTagName('module')[0]->nodeValue;
+    $id = (string) $event['id'];
+
+    if(isset($event->resources->module->item)){
+        $matiere = (string) $event->resources->module->item;
     }else{
         $matiere = '';
     }
 
     $matiere = preg_replace('#^(.*) - (.*) \(.*\)$#s', '$2', $matiere);
 
-    $groupe = removeNewLines($event->getElementsByTagName('group')[0]->nodeValue);
-    if(isset($event->getElementsByTagName('room')[0])){
-        $salle = removeNewLines($event->getElementsByTagName('room')[0]->nodeValue);
+    $groupe = removeNewLines((string) $event->resources->group->item);
+    if(isset($event->resources->room->item)){
+        $salle = removeNewLines((string) $event->resources->room->item);
     }else{
         $salle = '';
     }
-    $horaires = $event->getElementsByTagName('prettytimes')[0]->nodeValue;
-    $day = $event->getElementsByTagName('day')[0]->nodeValue;
-    if(isset($event->getElementsByTagName('notes')[0])){
-        $notes = $event->getElementsByTagName('notes')[0]->nodeValue;
+    $horaires = (string) $event->prettytimes;
+    $day = (string) $event->day;
+    if(isset($event->notes)){
+        $notes = (string) $event->notes;
     }else{
         $notes = '';
     }
-    $rawweeks = $event->getElementsByTagName('rawweeks')[0]->nodeValue;
+    $rawweeks = (string) $event->rawweeks;
 
-    if(preg_match('#(TD|TP)A'.$group.'('.$subgroup.')?$#', $groupe) || preg_match('#^L3 INFO$#', $groupe) || preg_match('#^L3 INFO s[0-9]{1} - CMA$#', $groupe) || preg_match('/(L3 INFO s[0-9]{1} - (TD|TP)A[0-9]{1}(1)?){'.$nbGroups.'}$/m', $groupe)){
+    if(preg_match('/M1 INF-DC s1/', $groupe)){
+    //if(preg_match('#(TD|TP)A'.$group.'('.$subgroup.')?$#', $groupe) || preg_match('#^M1 INF-DC$#', $groupe) || preg_match('#^M1 INF-DC s[0-9]{1} - CMA$#', $groupe) || preg_match('/(M1 INF-DC s[0-9]{1} - (TD|TP)A[0-9]{1}(1)?){'.$nbGroups.'}$/m', $groupe)){
 
-            $cours[] = [
-                'id' => $id,
-                'matiere' => $matiere,
-                'groupe' => $groupe,
-                'day' => $day,
-                'color' => $color,
-                'rawweeks' => $rawweeks
-            ];
+        $cours[] = [
+            'id' => $id,
+            'matiere' => $matiere,
+            'groupe' => $groupe,
+            'day' => $day,
+            'color' => $color,
+            'rawweeks' => $rawweeks
+        ];
 
         if(preg_match('#([0-9]{2}:[0-9]{2})-([0-9]{2}:[0-9]{2}) ([A-Z\/]+)#', $horaires, $matches)){
             $cours[$i]['horaires'] = [
@@ -177,7 +177,6 @@ foreach ($final as $key => $semaine) { // key == le numéro de la semaine
     }
 }
 
-
 $fullCal = [];
 foreach ($final as $key => $semaine) {
     foreach ($semaine as $key2 => $jour) {
@@ -186,3 +185,4 @@ foreach ($final as $key => $semaine) {
         }
     }
 }
+
