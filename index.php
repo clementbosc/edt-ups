@@ -153,6 +153,10 @@ if(isset($_GET['start'], $_GET['end'])){
                 margin: 0;
             }
 
+            form{
+                display: inline-block;
+            }
+
         </style>
         <script src='jquery.js'></script>
         <script src='moment.js'></script>
@@ -208,10 +212,23 @@ if(isset($_GET['start'], $_GET['end'])){
     </head>
     <body>
         <header>
-            <h1>Emploi du temps groupe M1 DC</h1>
+            <h1>Emploi du temps groupe M1
+                <form action="">
+                    <select name="parcours">
+                        <option value="DC_g241537" <?= $_GET['parcours'] == 'DC_g241537' ? 'selected' : '' ?>>DC</option>
+                        <option value="IARF_g241498" <?= $_GET['parcours'] == 'IARF_g241498' ? 'selected' : '' ?>>IARF</option>
+                        <option value="IGAI_g241605" <?= $_GET['parcours'] == 'IGAI_g241605' ? 'selected' : '' ?>>IGAI</option>
+                        <option value="IHM_g241640" <?= $_GET['parcours'] == 'IHM_g241640' ? 'selected' : '' ?>>IHM</option>
+                        <option value="SIAME_g241744" <?= $_GET['parcours'] == 'SIAME_g241744' ? 'selected' : '' ?>>SIAME</option>
+                        <option value="DL_g241677" <?= $_GET['parcours'] == 'DL_g241677' ? 'selected' : '' ?>>DL</option>
+                        <option value="CSA_g241572" <?= $_GET['parcours'] == 'CSA_g241572' ? 'selected' : '' ?>>CSA</option>
+                    </select>
+                    <button type="submit">OK</button>
+                </form>
+            </h1>
             <div class="inputLinkICS-container">
                 <div class="ics-img"></div>
-                <input type="text" id="inputLinkICS" value="https://<?= $_SERVER['HTTP_HOST'].'/edt/get-ics.php?group='.$group.'&subgroup='.$subgroup ?>">
+                <input type="text" id="inputLinkICS" value="https://<?= $_SERVER['HTTP_HOST'].'/edt/get-ics.php?parcours='.$parcours.'_'.$idCal ?>">
                 <input type="image" src="copy_icon.svg" style="outline: none; margin: 0 0 0 10px;" data-clipboard-target="#inputLinkICS" id="copyButton">
             </div>
         </header>

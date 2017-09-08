@@ -1,22 +1,16 @@
 <?php
 //error_reporting(E_STRICT);
 
-$id = 'g241537';
+$parcours = 'DC';
+$idCal = 'g241537';
 
-if(isset($_GET['group']) && $_GET['group'] != ''){
-    $group = $_GET['group'];
-}else{
-    $group = '4';
+if(isset($_GET['parcours']) && $_GET['parcours'] != ''){
+
+    if(preg_match('/([A-Z]+)_(g[0-9]+)/', $_GET['parcours'], $matches)){
+        $parcours = $matches[1];
+        $idCal = $matches[2];
+    }
 }
-
-
-if(isset($_GET['subgroup']) && $_GET['subgroup'] != ''){
-    $subgroup = $_GET['subgroup'];
-}else{
-    $subgroup = '2';
-}
-
-$nbGroups = 4;
 
 $colorArray = [
     'BEA7B8' => '81C784', //cours/td
@@ -64,7 +58,7 @@ function removeNewLines($string){
 
 
 $curl = curl_init();
-curl_setopt($curl, CURLOPT_URL, 'https://edt.univ-tlse3.fr/FSI/2017_2018/M1/M1_INF_DC/'.$id.'.xml');
+curl_setopt($curl, CURLOPT_URL, 'https://edt.univ-tlse3.fr/FSI/2017_2018/M1/M1_INF_'.$parcours.'/'.$idCal.'.xml');
 curl_setopt($curl, CURLOPT_FAILONERROR,1);
 curl_setopt($curl, CURLOPT_FOLLOWLOCATION,1);
 curl_setopt($curl, CURLOPT_RETURNTRANSFER,1);
@@ -122,7 +116,7 @@ foreach ($events as $key => $event) {
     }
     $rawweeks = (string) $event->rawweeks;
 
-    if(preg_match('/M1 INF-DC s1/', $groupe)){
+    //if(preg_match('/M1 INF-'.$parcours.' s1/', $groupe)){
     //if(preg_match('#(TD|TP)A'.$group.'('.$subgroup.')?$#', $groupe) || preg_match('#^M1 INF-DC$#', $groupe) || preg_match('#^M1 INF-DC s[0-9]{1} - CMA$#', $groupe) || preg_match('/(M1 INF-DC s[0-9]{1} - (TD|TP)A[0-9]{1}(1)?){'.$nbGroups.'}$/m', $groupe)){
 
         $cours[] = [
@@ -151,7 +145,7 @@ foreach ($events as $key => $event) {
 
 
         $i++;
-    }
+    //}
 }
 
 $final = []; //initialisation du tableau
@@ -185,4 +179,5 @@ foreach ($final as $key => $semaine) {
         }
     }
 }
+
 
