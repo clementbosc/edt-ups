@@ -165,8 +165,10 @@ foreach ($final as $key => $semaine) { // key == le numéro de la semaine
         $dateJour = clone $dateDebutSemaine;
         $dateJour->add(new DateInterval('P'.$key2.'D'));
         foreach ($jour as $key3 => $cour) {
-            $final[$key][$key2][$key3]['horaires']['begin'] = $dateJour->format('Y-m-d').' '.$cour['horaires']['begin'].':00';
-            $final[$key][$key2][$key3]['horaires']['end'] = $dateJour->format('Y-m-d').' '.$cour['horaires']['end'].':00';
+            if(isset($cour['horaires'])){
+                $final[$key][$key2][$key3]['horaires']['begin'] = $dateJour->format('Y-m-d').' '.$cour['horaires']['begin'].':00';
+                $final[$key][$key2][$key3]['horaires']['end'] = $dateJour->format('Y-m-d').' '.$cour['horaires']['end'].':00';
+            }
         }
     }
 }
